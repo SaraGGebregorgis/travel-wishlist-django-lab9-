@@ -1,0 +1,22 @@
+{% extends 'travel_wishlist/base.html' %}
+{% block content %}
+
+<h2>Places you have visited </h2>
+
+<!-- Check if there are any visited places passed from the view -->
+{% if visited %}
+
+ <!-- Displ a list of all visited places -->
+<ul> 
+    {% for place in visited %}
+        <li>{{ place.name}}</li>
+    {% endfor %}
+</ul>
+
+{% else %}
+ <!-- shown if no visted places exist -->
+<p>You have not visited any places yet</p>
+
+{% endif %}
+
+{% endblock %}

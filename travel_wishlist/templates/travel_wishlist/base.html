@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head> 
+        <title>Travel Wishlist</title>
+        <link rel="stylesheet" href="https://unpkg.com/sakura.css/css/sakura.css" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/style.css'%}", type="text/css">
+    </head>
+
+      <!-- Page Header -->
+    <h1>Where do you want to go?</h1>
+
+    <body>
+        {% block content %}
+        {% endblock %}
+    </body>
+
+    <div>
+        <p>A travel wishlist, build with Django</p>
+
+         <!-- 
+            It dynamically generates the correct URL path based on the view name 
+            you gave in your urls.py file.
+            Django will look for a URL patern with the nae "place_list"
+            and automatically fill in the correct URL (in this case, "/").
+             means:
+              - If you later change your URL pattern (for example, to "places/"),
+                you don’t have to manually update every template. Django will 
+                update it automatically since you’re using the named URL.
+        -->
+        <a class="nav-link" href="{% url 'place_list' %}">Your wishlist</a>
+        <a class="nav-link" href="{% url 'place_visited' %}">Places you've visited</a>
+    </div>
+
+</html>

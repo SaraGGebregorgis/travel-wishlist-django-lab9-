@@ -1,0 +1,27 @@
+span.place-name {
+    display: inline-block;
+    width: 70%;
+}
+
+form.visited-form {
+    display: inline;
+}
+
+div.wishlist-place {
+    margin: 20px; /* Adds spacing place entry */
+}
+
+label { 
+    display: inline-block;
+    padding-right: 15px;
+}
+
+a.nav-link {
+    margin-right: 10px;
+}
+
+#add-new-place { /* the 'Add' button */
+
+    background-color: green;
+    border: darkgreen;
+}
