@@ -9,15 +9,17 @@
     {% csrf_token %}
 
     <!-- Displays the form fields from NewPlaceForm -->
-    {{ new_place_form}}
+    {{ new_place_form }}
     <button id='add-new-place' type="submit">Add</button>  <!-- to add the new place -->
 </form>
 
 {% for place in places %}
+<div class="wishlist-place"> 
 
-<div id='place-name-{{ place.pk }}'class="wishlist-place"> 
+    <span id="place-name-{{ place.pk }}" class="place-name">
+      <a href="{% url 'place_details' place.pk %}">{{ place.name }}</a>
 
-    <span class="place-name">{{ place.name }}</span>  <!-- Display the name of the place -->
+    </span>  <!-- Display the name of the place -->
 
       <!-- Form to mark this place as visited -->
     <form class='visited-form' method="POST" action="{% url 'place_was_visited' place.pk %}"> 

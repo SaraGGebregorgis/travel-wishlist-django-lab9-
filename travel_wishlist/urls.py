@@ -10,6 +10,9 @@ urlpatterns = [
     # Marks a specific place (by primary key) as visited
     path('place/<int:place_pk>/was_visited/', views.place_was_visited, name='place_was_visited'),
     # About page - provides information about the app or developer
-    path('about', views.about, name='about')
-
+    path('about', views.about, name='about'),
+      # Calls the place_details view and displays full information.
+    path('place/<int:place_pk>', views.place_details, name='place_details'),
+    # Using a dedicated delete URL prevents accidental deletion
+    path('place/<int:place_pk>/delete', views.delete_place, name='delete_place')
 ]

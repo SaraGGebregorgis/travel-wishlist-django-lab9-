@@ -67,3 +67,4 @@ def test_nonexistent_place(self): # Tests what happens if user tries to visit a 
     visit_nonexistent_place_url = reverse('place_was_visited', args=(123456, ))
     response = self.client.post(visit_nonexistent_place_url, follow=True)
     self.assertEqual(404,response.status_cade)
+    

@@ -9,7 +9,9 @@
  <!-- Displ a list of all visited places -->
 <ul> 
     {% for place in visited %}
-        <li>{{ place.name}}</li>
+        <li>{{ place.name}}
+            <a href="{% url 'place_details' place.pk%}">{{ place.name }}</a>
+        </li>
     {% endfor %}
 </ul>
 
