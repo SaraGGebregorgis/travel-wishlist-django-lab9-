@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os 
+from google.oauth2 import service_account
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,9 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-t-ydurmq0scyo+gf1*h2j312#5y4+dnp-o(6ru%!g4bxf#l$3@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if os.getenv('GAE_INSTANCE'):
+    DEBUG = False
+else:
+    DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'travel_wishlist' ### Added custom app for managing the travel wishlist
 ]
 
@@ -56,7 +61,7 @@ ROOT_URLCONF = 'wishlist.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,10 +81,22 @@ WSGI_APPLICATION = 'wishlist.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'places',
+        'USER': 'traveler',
+        'PASSWORD': os.getenv('TRAVELER_PW'),
+        'HOST': '/cloudsql/wishlist-django-480421:us-central1:wishlist-db-mysql',
+        'PORT': "3306"
     }
 }
+if not os.getenv('GAE_INSTANCE'):
+    #DATABASES['default']['HOST'] = '127.0.0.1'
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
+        }
+    }
 
 
 # Password validation
@@ -116,13 +133,33 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'
-
-MEDIA_URL = '/media/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'www', 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+LOGIN_URL = '/admin/login/'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Detect if running on App Engine
+ON_APP_ENGINE = (
+    os.getenv('GAE_ENV', '').startswith('standard')
+    or os.getenv('GAE_INSTANCE') is not None
+)
+
+if not ON_APP_ENGINE:
+    # Local development
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/media/'
+else:
+    # Running on App Engine: use Google Cloud Storage
+    GS_STATIC_FILE_BUCKET = 'wishlist-django-480421.appspot.com'
+    STATIC_URL = f'https://storage.googleapis.com/{GS_STATIC_FILE_BUCKET}/static/'
+
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_BUCKET_NAME = 'wishlist-users-upload-images'
+    MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/media/'
+
+    # Optional safety: writable temp dir (GCS backend doesn’t really use it)
+    MEDIA_ROOT = '/tmp/media'
+
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+        os.path.join(BASE_DIR, 'travel_credentials.json')
+    )

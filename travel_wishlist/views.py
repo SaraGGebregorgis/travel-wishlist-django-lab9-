@@ -54,7 +54,6 @@ def about (request):
 def place_details(request, place_pk):
      # Only allow access to a place that belongs to the logged-in user
     place = get_object_or_404(Place, pk=place_pk)
-    return render(request, 'travel_wishlist/place_detail.html', {'place' : place})
 
     if place.user != request.user:
         return HttpResponseForbidden()
@@ -81,7 +80,7 @@ def place_details(request, place_pk):
 
 @login_required
 def delete_place(request, place_pk): # Only get the place if it belongs to the current user
-    place = get_object_or_404(Place, pk=place.pk)
+    place = get_object_or_404(Place, pk=place_pk)
     if place.user == request.user:
         place.delete()
         return redirect('place_list')

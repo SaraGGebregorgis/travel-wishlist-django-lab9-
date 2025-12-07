@@ -49,7 +49,7 @@
 
 <form action="{% url 'delete_place' place.pk%}" method="POST">
     {% csrf_token %}
-    <button type="submit" class="delete">Delete</button>
+    <button type="submit" class="delete-button">Delete</button>
 </form>
 
 <script src="{% static 'js/confirm_delete.js'%}"></script>
